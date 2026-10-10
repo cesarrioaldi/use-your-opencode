@@ -7,10 +7,10 @@ description: >
   report, and keeps state on disk so nothing is lost to context compaction.
   Stack-agnostic: the rules live in AGENTS.md (the cross-agent standard), and
   verification uses whatever commands, datastore client, and port the project
-  already has. Use whenever code must be delegated to a CLI executor, or the
-  user says "pakai opencode", "suruh opencode", "opencode run", "prompt file",
-  "jangan tulis kode sendiri", "verifikasi sendiri", "laporan", "STATUS.md", or
-  asks for one repeatable workflow that works across CLI agents.
+  already has. Use whenever code must be delegated to a CLI coding agent, or the
+  user mentions "opencode run", a prompt file, "don't write the code yourself",
+  "verify it yourself", a status file, a run report, or asks for one repeatable
+  workflow that works across CLI agents.
 argument-hint: "[task name]"
 ---
 
@@ -114,7 +114,7 @@ the binding constraints inside the prompt file regardless. Recipe:
    you measured: rendered state, datastore rows, HTTP codes, exit codes. Recipes
    and traps: `references/verification.md`.
 5. **Record, then report** — update `<memory-dir>/STATUS.md` and write
-   `<memory-dir>/laporan/LAPORAN-<name>.md` **before** telling the owner it is
+   `<memory-dir>/reports/<name>.md` **before** telling the owner it is
    done. Layout: `references/memory-files.md`.
 
 ## Never trust the report

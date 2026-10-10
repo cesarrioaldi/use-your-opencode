@@ -44,7 +44,7 @@ State, what is built, how to run: read <memory-dir>/STATUS.md.
 - Do not trust the executor's report. Measure: rendered state, datastore rows,
   HTTP codes, exit codes. Screenshots are illustration, not evidence.
 - Every finished task: update `<memory-dir>/STATUS.md` and write
-  `<memory-dir>/laporan/LAPORAN-<name>.md`.
+  `<memory-dir>/reports/<name>.md`.
 - Agent notes live in <memory-dir> (gitignored); the root holds project files.
 - Scratch scripts: `<prefix>` and outside the typechecked/tested tree.
 
@@ -117,7 +117,7 @@ One gitignored directory, fixed names inside, chosen once:
     STATUS.md                  state, numbers, traps, how to verify
     BRIEF.md                   product brief, if there is one
     prompts/<name>.md          every command sent to the executor
-    laporan/LAPORAN-<name>.md  what each run actually did, with evidence
+    reports/<name>.md          what each run actually did, with evidence
 ```
 
 `ai/` is a fine default; `notes/`, `.agent/`, `docs/agent/` work just as well.

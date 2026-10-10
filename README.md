@@ -29,7 +29,7 @@ The loop it encodes:
 4. **Verify yourself** — rendered state, datastore rows, HTTP codes, exit codes.
    The report is a claim.
 5. **Record before reporting** — `<memory-dir>/STATUS.md` and
-   `<memory-dir>/laporan/LAPORAN-<name>.md`.
+   `<memory-dir>/reports/<name>.md`.
 
 | file | contents |
 |---|---|

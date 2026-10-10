@@ -12,7 +12,7 @@ written down before it is needed.
     STATUS.md                   state, numbers, traps, how to verify
     BRIEF.md                    product brief, if there is one
     prompts/<name>.md           every command sent to the executor
-    laporan/LAPORAN-<name>.md   what each run actually did, with evidence
+    reports/<name>.md           what each run actually did, with evidence
 ```
 
 `ai/` is the default name; `notes/`, `.agent/`, `docs/agent/` are equally fine.
@@ -54,7 +54,7 @@ The rule that makes this worth the effort: **before reporting to the owner**. A
 report spoken only into the conversation is lost at the next compaction; the file
 is not.
 
-## LAPORAN-<name>.md
+## `reports/<name>.md`
 
 One per executor run, written by the orchestrator. Skeleton:
 
