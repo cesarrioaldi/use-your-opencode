@@ -44,11 +44,11 @@ State, what is built, how to run: read <memory-dir>/STATUS.md.
 - Do not trust the executor's report. Measure: rendered state, datastore rows,
   HTTP codes, exit codes. Screenshots are illustration, not evidence.
 - Every task ends with the executor's own record: `<memory-dir>/reports/<name>.md`
-  (claims, each with its raw command and raw output, plus what it did not verify)
-  and one dated line under `## Executor log (unverified)` in
-  `<memory-dir>/STATUS.md`. The orchestrator appends its verification and promotes
-  the fact only once measured. The prompt file assigns this; a run without its
-  report did not finish.
+  (claims, each with its raw command and raw output, plus what it did not verify).
+  The prompt file assigns this; a run without its report did not finish.
+- The executor never writes `<memory-dir>/STATUS.md`. That file has one writer —
+  the orchestrator — which quotes the report's claim verbatim and puts its own
+  measurement under it.
 - Agent notes live in <memory-dir> (gitignored); the root holds project files.
 - Scratch scripts: `<prefix>` and outside the typechecked/tested tree.
 
@@ -95,10 +95,10 @@ test -f AGENTS.md && echo present || echo missing
 - Do not edit the executor's own configuration.
 - Do not trust the executor's report: verify with measurements — rendered state,
   datastore rows, HTTP codes, exit codes. Screenshots are illustration.
-- Before reporting a finished task: the executor writes its record —
-  `<memory-dir>/reports/<name>.md` plus a dated line under
-  `## Executor log (unverified)` in `<memory-dir>/STATUS.md` — and the
-  orchestrator appends its verification and promotes the fact only once measured.
+- Before reporting a finished task: the executor writes its run report
+  (`<memory-dir>/reports/<name>.md`) and never touches
+  `<memory-dir>/STATUS.md`; the orchestrator appends the verification and writes
+  the status entry itself, quoting the claim next to its measurement.
 <!-- use-your-opencode:end -->
 ```
 
@@ -172,8 +172,8 @@ One gitignored directory, fixed names inside, chosen once:
 <repo>/
   AGENTS.md                    rules for every agent (committed)
   <memory-dir>/
-    STATUS.md                  state, numbers, traps, how to verify
-                               + `## Executor log (unverified)` at the end
+    STATUS.md                  state, numbers, traps, how to verify, and a task
+                               history you append at the end
     BRIEF.md                   product brief, if there is one
     prompts/<name>.md          every command sent to the executor
     reports/<name>.md          the executor's claims + the orchestrator's verification
@@ -248,7 +248,7 @@ to edit the owner's config.
 ## 4. Smoke task first
 
 One prompt file, the smallest real change, the whole loop: write → run → measure
-→ `STATUS.md` → report. Whatever breaks here (a wrong command in the rules file,
+→ report → status entry. Whatever breaks here (a wrong command in the rules file,
 a port that is not what the README said, the datastore client missing) is free to
 discover before real work starts.
 

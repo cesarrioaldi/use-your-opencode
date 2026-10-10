@@ -39,17 +39,14 @@ Measured: `<exact command>` → `<exact output: row / count / code>`.
 `<typecheck command>` and `<lint command>` clean. Report the diff of every file
 you changed, verbatim.
 
-Then write the record, in this order:
+Then write the record:
 
 1. **`<memory-dir>/reports/<name>.md`** — create it (or append if a previous
    round exists) with the skeleton in `references/memory-files.md`. Every claim
    carries the raw command and its raw output. `not verified` is a valid entry; a
    green claim with nothing behind it is not.
-2. **`<memory-dir>/STATUS.md`** — append one dated line to the section
-   `## Executor log (unverified)`, creating that section at the end of the file
-   if it is missing. Never edit a line above it: that file is not yours to
-   rewrite.
-3. Nothing else. Not the orchestrator's `verified` section, not another task's
+2. Nothing else. Not `<memory-dir>/STATUS.md` — that file has one writer and it
+   is not you. Not the orchestrator's `verified` section, not another task's
    report, not a prompt file.
 ```
 
@@ -71,8 +68,11 @@ file shows the disagreement instead of hiding it.
 
 Verified 2026-10-11, `opencode` 1.18.35 on a two-file task: the executor created
 its report with every section filled, with the raw commands and their raw output,
-appended its dated log line to `STATUS.md`, and touched nothing outside the
-whitelist. It also left the `verified` section alone, as instructed.
+touched nothing outside the whitelist, and left the orchestrator's section alone.
+The same test also ran the two-writer variant, and that is what settled the
+design: the executor did append its line to `STATUS.md`, but nothing could prove
+the body above it had survived — the memory directory is gitignored, so there is
+no `git diff` to check. One writer per file.
 
 Paste-ready, with the task's own paths and commands filled in:
 
@@ -96,14 +96,8 @@ Paste-ready, with the task's own paths and commands filled in:
    ## Traps worth keeping
    ```
 
-2. Append to `<memory-dir>/STATUS.md`, under `## Executor log (unverified)`:
-
-   ```
-   - 2026-10-11 FIX1 — <what changed> — <the measurement> — report:
-     reports/FIX1.md
-   ```
-
-3. Stop there. Do not touch the `verified` section, other reports, or the
+2. Stop there. Do not open `<memory-dir>/STATUS.md` at all — it has one writer
+   and it is not you. Do not touch the `verified` section, other reports, or the
    prompt file.
 ````
 
@@ -173,8 +167,10 @@ same CLI can fight over its local session store (verified: concurrent
 5. Read the report the executor wrote, then append your `verified` section:
    point by point, the claim and the number that confirms or kills it. Do not
    edit its words — the unedited claim is what makes the file trustworthy.
-6. `STATUS.md`: promote a fact out of `## Executor log (unverified)` only after
-   step 4 confirmed it; leave the rest in the log.
+6. `STATUS.md`: write the entry yourself — quote the report's claim verbatim,
+   labelled unverified, then your measurement under it (confirmed, or the number
+   that contradicts). The executor never writes this file, so the body above the
+   entry is unchanged by the run and nothing unmeasured enters it.
 7. Never rewrite a prompt file that has already been sent — write the next one.
    The prompt directory is history, and history that gets edited is not evidence.
 8. A fix round is the same shape: `<memory-dir>/prompts/<name>-fix1.md` quotes
