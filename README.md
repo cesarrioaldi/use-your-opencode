@@ -37,4 +37,4 @@ The loop it encodes:
 | `references/prompt-file.md` | prompt-file template and rationale |
 | `references/verification.md` | how to find the project's own tools, plus the traps that cost debugging sessions |
 | `references/memory-files.md` | `STATUS.md` / report skeletons and update checklists |
-| `references/bootstrap.md` | `AGENTS.md`, per-tool wiring, memory layout, executor check, multi-agent install |
+| `references/bootstrap.md` | `AGENTS.md`, per-tool wiring, memory layout, executor install + probe, multi-agent install |

@@ -23,6 +23,10 @@ Nothing here assumes a stack. Read the repo, find its commands, its port, its
 datastore client, its test entry — then measure with those. A recipe that hard-
 codes someone else's tool is a recipe that fails on the next project.
 
+Needs a shell, file tools, and one installed CLI coding agent. Any agent that can
+read `AGENTS.md` runs this loop; an agent with no skills system gets it from the
+rules file alone.
+
 ## Two seats
 
 **Orchestrator (you).** Talk to the owner, read the repo, measure, decide, write
@@ -41,7 +45,9 @@ The default executor is `opencode`, run non-interactively:
 opencode run --auto "$(cat <memory-dir>/prompts/<name>.md)"
 ```
 
-If it is not installed, use whichever CLI agent the owner has. Find its
+If it is not installed, install it first — vendor-documented methods and a probe
+that proves the binary *and* its provider auth work: `references/bootstrap.md` §3
+— or use whichever CLI agent the owner already has. Find that agent's
 non-interactive form with `<cli> --help` — `claude -p`, `codex exec`,
 `gemini -p`, `cursor-agent -p` are the shapes to look for — and keep the
 invocation in the project rules file so every session uses the same one. The

@@ -120,8 +120,8 @@ One gitignored directory, fixed names inside, chosen once:
     reports/<name>.md          what each run actually did, with evidence
 ```
 
-`ai/` is a fine default; `notes/`, `.agent/`, `docs/agent/` work just as well.
-Rename freely — but pick one, use it in the rules file, and never keep two.
+`<memory-dir>` is a placeholder: `notes/`, `.agent/`, `ai/`, `docs/agent/` are all
+fine. Pick one, write it into the rules file, and never keep two.
 
 Default `.gitignore` lines (adjust to match the names you picked):
 
@@ -135,12 +135,51 @@ teammate's agent inherits the rules; gitignored means the rules are yours alone
 and nobody reviews them. Solo projects differ from shared repos — decide, and
 say which you chose in the rules file header.
 
-## 3. Check the executor before trusting it
+## 3. The executor: installed, configured, probed
+
+Detect what is already there, and prefer what the owner already uses:
 
 ```bash
 command -v opencode claude codex gemini cursor-agent
-<cli> --version
+opencode --version                 # 1.18.35 on this machine, 2026-10-11
 ```
+
+### Install opencode when it is missing
+
+Ask the owner first — installing software is their machine, their call — then use
+the vendor's documented method (<https://opencode.ai/docs/> → Install). Verified
+2026-10-11: `npm view opencode-ai version` returns the same version as a local
+install, and the install script URL answers.
+
+```bash
+curl -fsSL https://opencode.ai/install | bash   # primary; lands in ~/.opencode/bin
+npm install -g opencode-ai                      # when Node is the package manager in use
+brew install anomalyco/tap/opencode             # macOS/Linux; the tap tracks releases closer
+sudo pacman -S opencode                         # Arch (or: paru -S opencode-bin)
+choco install opencode                          # Windows (or: scoop install opencode)
+```
+
+The vendor docs warn that these installers provide the OpenCode 1 binary and can
+conflict with, or replace, an OpenCode 2 installation — if one is already present,
+ask the owner which they want rather than installing over it.
+
+If `opencode` is still not found afterwards, the install directory is not on
+`PATH`: add `~/.opencode/bin` (or the npm global bin) and open a new shell.
+
+### Probe it for real
+
+A version string proves the binary exists, not that it can code:
+
+```bash
+mkdir -p /tmp/exec-probe && cd /tmp/exec-probe
+opencode run --auto "Reply with exactly: ok"
+```
+
+`ok` means binary, `PATH`, and provider auth all work. A provider or auth error
+is the owner's credentials to fix — the TUI `/connect`, or their API keys: never
+edit their config for it. If a CLI is genuinely unavailable, the loop still runs
+on any other agent with a non-interactive mode (`claude -p`, `codex exec`,
+`gemini -p`, `cursor-agent -p`); put that invocation in the rules file.
 
 Then measure reliability instead of assuming it: send the same trivial prompt a
 few times and count the failures. A free or shared model behind a local router
@@ -164,3 +203,10 @@ npx skills add /path/to/skills@use-your-opencode -g -a '*' -y   # from a local c
 `-a '*'` covers every detected agent; `-g` installs at user level so the workflow
 follows you into every project. Drop `-g` for a project-scoped install. Update
 with `npx skills update -g`.
+
+An agent with no skills system — or one the CLI does not detect — still gets the
+loop: the rules-file template in §1 carries the whole discipline, so anything that
+reads `AGENTS.md`, or a symlink to it, behaves like the orchestrator. The skill
+package is the detailed version; the rules file is the portable one. Install it
+into every agent the CLI knows, and keep the rules file as the fallback for the
+rest.
