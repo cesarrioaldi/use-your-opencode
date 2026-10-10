@@ -248,9 +248,15 @@ discover before real work starts.
 ## 5. Install this skill for many CLI agents
 
 ```bash
-npx skills add <owner>/<repo>@use-your-opencode -g -a '*' -y
-npx skills add /path/to/skills@use-your-opencode -g -a '*' -y   # from a local checkout
+npx skills add <owner>/<repo> -g -a '*' -y                      # every detected agent
+npx skills add <owner>/<repo> -s use-your-opencode -g -a '*' -y # one skill, when the repo holds several
+npx skills add /path/to/skills -s use-your-opencode -g -a '*' -y  # from a local checkout
+npx skills add <owner>/<repo> -l                                # list without installing
+npx skills use <owner>/<repo>@use-your-opencode                 # print SKILL.md, no install
 ```
+
+The `@<skill>` suffix belongs to `use`. With `add`, select the skill with `-s`
+(verified: a local path with `@skill` fails with "Path not found").
 
 `-a '*'` covers every detected agent; `-g` installs at user level so the workflow
 follows you into every project. Drop `-g` for a project-scoped install. Update
