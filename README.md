@@ -3,31 +3,38 @@
 Agent skills, installable with the [skills CLI](https://skills.sh/).
 
 ```bash
-npx skills add <owner>/skills@use-your-opencode -g -a '*' -y
+npx skills add <owner>/<repo>@use-your-opencode -g -a '*' -y
 ```
 
 ## `use-your-opencode`
 
 Makes an orchestrator agent stop writing code itself: it writes a prompt file,
-runs the `opencode` CLI on it, verifies the result with its own measurements
+runs a CLI coding agent on it, verifies the result with its own measurements
 instead of trusting the executor's report, and records state on disk so work
 survives context compaction.
 
-The workflow it encodes:
+Stack-agnostic by design — no hardcoded datastore client, port, package manager,
+or framework. The rules live in `AGENTS.md` (the cross-agent standard, with
+symlinks for tools that insist on their own filename), and verification uses
+whatever commands the project already has.
 
-1. **Map** the repo — rules file, status file, the files the change touches.
-2. **Write a prompt file** to `ai/prompts/<name>.md`: file whitelist, measured
-   problem, per-file steps, prohibitions, done-gate.
-3. **Run** `opencode run --auto "$(cat ai/prompts/<name>.md)"`.
-4. **Verify yourself** — DOM counts, `psql` rows, HTTP codes, exit codes. The
-   report is a claim.
-5. **Record before reporting** — `ai/STATUS.md` and
-   `ai/laporan/LAPORAN-<name>.md`.
+The loop it encodes:
+
+1. **Map** the repo — rules file, memory file, the commands it runs, the files
+   the change touches.
+2. **Write a prompt file** to `<memory-dir>/prompts/<name>.md`: file whitelist,
+   measured problem, per-file steps, prohibitions, done-gate.
+3. **Run** `opencode run --auto "$(cat <memory-dir>/prompts/<name>.md)"` — or any
+   other CLI executor the owner has.
+4. **Verify yourself** — rendered state, datastore rows, HTTP codes, exit codes.
+   The report is a claim.
+5. **Record before reporting** — `<memory-dir>/STATUS.md` and
+   `<memory-dir>/laporan/LAPORAN-<name>.md`.
 
 | file | contents |
 |---|---|
 | `SKILL.md` | the workflow, its rules, and how it fails |
 | `references/prompt-file.md` | prompt-file template and rationale |
-| `references/verification.md` | measurement recipes and the traps that cost debugging sessions |
-| `references/memory-files.md` | `STATUS.md` / `LAPORAN` skeletons and update checklists |
-| `references/bootstrap.md` | rules file, `ai/` layout, executor check, multi-agent install |
+| `references/verification.md` | how to find the project's own tools, plus the traps that cost debugging sessions |
+| `references/memory-files.md` | `STATUS.md` / report skeletons and update checklists |
+| `references/bootstrap.md` | `AGENTS.md`, per-tool wiring, memory layout, executor check, multi-agent install |
