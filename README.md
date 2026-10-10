@@ -13,11 +13,11 @@ client, port, framework, or package manager.
 
 ## Install
 
-Replace `<owner>/<repo>` with this repository — the URL you cloned from, or
-`git remote -v`.
+These commands use this repository's path. A fork or a rename substitutes the same
+way — swap in your own `owner/repo`.
 
 ```bash
-npx skills add <owner>/<repo> -g -a '*' -y
+npx skills add cesarrioaldi/use-your-opencode -g -a '*' -y
 ```
 
 | flag | effect |
@@ -31,24 +31,24 @@ npx skills add <owner>/<repo> -g -a '*' -y
 Other forms, all checked against the `skills` CLI:
 
 ```bash
-npx skills add https://github.com/<owner>/<repo> -g -a '*' -y   # full URL
-npx skills add <owner>/<repo> -a opencode -y                    # one agent, project scope
-npx skills add <owner>/<repo> -l                                # list skills, install nothing
-npx skills use <owner>/<repo>@use-your-opencode                 # print SKILL.md, install nothing
-# npx skills add <owner>/<repo>@use-your-opencode               # ✗ not supported — use -s
+npx skills add https://github.com/cesarrioaldi/use-your-opencode -g -a '*' -y   # full URL
+npx skills add cesarrioaldi/use-your-opencode -a opencode -y                    # one agent, project scope
+npx skills add cesarrioaldi/use-your-opencode -l                                # list skills, install nothing
+npx skills use cesarrioaldi/use-your-opencode@use-your-opencode                 # print SKILL.md, install nothing
+# npx skills add cesarrioaldi/use-your-opencode@use-your-opencode               # ✗ not supported — use -s
 ```
 
 ### Manual install, no CLI
 
 ```bash
-git clone https://github.com/<owner>/<repo> /tmp/skills
+git clone https://github.com/cesarrioaldi/use-your-opencode /tmp/skills
 mkdir -p ~/.agents/skills
 cp -R /tmp/skills/use-your-opencode ~/.agents/skills/           # user level
 # or: cp -R /tmp/skills/use-your-opencode .agents/skills/       # project level
 ```
 
 A tarball works the same way:
-`curl -fsSL https://github.com/<owner>/<repo>/archive/refs/heads/main.tar.gz | tar xz -C /tmp`.
+`curl -fsSL https://github.com/cesarrioaldi/use-your-opencode/archive/refs/heads/main.tar.gz | tar xz -C /tmp`.
 
 ### Verify, update, remove
 
@@ -129,7 +129,7 @@ If you are an agent asked to install this skill, do exactly this and nothing els
 1. Install it, non-interactively:
 
    ```bash
-   npx skills add <owner>/<repo> -g -a '*' -y      # <owner>/<repo> = the URL you cloned from, or `git remote -v`
+   npx skills add cesarrioaldi/use-your-opencode -g -a '*' -y      # swap in your fork's owner/repo if you forked this
    ```
 
    If `-a '*'` is rejected by an older CLI, install per agent or copy the folder
