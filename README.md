@@ -7,12 +7,55 @@ the executor's report, and state lives on disk so nothing is lost to context
 compaction. The prompt file also assigns the record-keeping: the executor writes
 its own run report, while everything that claims to be true — the status file and
 the append-only verification — is written by the orchestrator alone, so a wrong
-claim is contradicted on the page instead of overwritten.
+claim is contradicted on the page instead of overwritten. It is also a cost
+decision: the executor does the typing on a cheap or free model, so the costly
+session never pays for the edits.
 
 Works with any agent that can read `AGENTS.md` — Claude Code, Codex, Cursor,
 Gemini CLI, opencode, Copilot, Cline, Windsurf, Zed, and the rest of the
 [skills](https://skills.sh/) ecosystem. Stack-agnostic: no hardcoded datastore
 client, port, framework, or package manager.
+
+## Why: the typing is the part a cheap model can do
+
+Most of what an agent burns in a coding session is not judgement, it is mechanical
+work — reading files back, retyping them, running the edit → run → edit loop. That
+is where the tokens go, and it is exactly the part you can hand to a model that
+costs nothing.
+
+So the split is also a budget. You — the model in the session the owner actually
+talks to — keep the context, the plan, the prompt file and the measurement. The
+executor burns the bulk tokens on the edits. Point it at a free or cheap endpoint
+and the expensive session stops paying for the typing:
+
+```bash
+opencode models                        # what is reachable from this machine
+opencode run --auto -m <provider>/<model> "$(cat <memory-dir>/prompts/FIX1.md)"
+opencode stats                         # tokens and cost, from the executor's own store
+```
+
+opencode reaches free models (`opencode/*-free`), anything you already pay for, or
+a local router, through `opencode auth login` (`opencode providers`). Measured on
+the machine this was written on, `opencode 1.18.35`: `opencode models` lists ten
+`opencode/*-free` models plus `9router/freemodel`, and `opencode stats` reports 228
+sessions over 54 days at **$0.00** total cost — 1.0M average tokens per session.
+The workflow's own test runs (a two-file Node task, `freemodel` behind a local
+router) took 29–69 s each, and every run produced a report good enough to verify
+against.
+
+Two rules keep the saving honest:
+
+- **Cheap runs fail more often.** Free and shared endpoints drop, rate-limit, and
+  stall. Keep prompts short, one task per file, rerun the unfinished part as a
+  smaller prompt — and if failures persist, measure the rate (same prompt, N times,
+  count the failures) instead of blaming the prompt. Never "stabilize" it by
+  editing the executor's own provider config; that belongs to the owner.
+- **The bar does not move.** A free executor does not make its report evidence.
+  Exit codes, stored rows, rendered state, `git diff --stat` — all measured by you.
+  A cheap executor costs reruns, not correctness, but only for as long as you
+  actually measure.
+
+Three runs, zero cost, and the costly session never typed a line of product code.
 
 ## Install
 
