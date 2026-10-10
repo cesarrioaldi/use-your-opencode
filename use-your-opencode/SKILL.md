@@ -5,12 +5,14 @@ description: >
   itself: it writes a prompt file, runs a CLI coding agent on it, then proves
   the result with its own measurements instead of trusting the executor's
   report, and keeps state on disk so nothing is lost to context compaction.
-  Stack-agnostic: the rules live in AGENTS.md (the cross-agent standard), and
-  verification uses whatever commands, datastore client, and port the project
-  already has. Use whenever code must be delegated to a CLI coding agent, or the
-  user mentions "opencode run", a prompt file, "don't write the code yourself",
-  "verify it yourself", a status file, a run report, or asks for one repeatable
-  workflow that works across CLI agents.
+  The executor writes its own run report and status entry back into the memory
+  directory, because the prompt file says so; the orchestrator appends the
+  verification and the verdict. Stack-agnostic: the rules live in AGENTS.md (the
+  cross-agent standard), and verification uses whatever commands, datastore
+  client, and port the project already has. Use whenever code must be delegated
+  to a CLI coding agent, or the user mentions "opencode run", a prompt file,
+  "don't write the code yourself", "verify it yourself", a status file, a run
+  report, or asks for one repeatable workflow that works across CLI agents.
 argument-hint: "[task name]"
 ---
 
@@ -30,14 +32,18 @@ rules file alone.
 ## Two seats
 
 **Orchestrator (you).** Talk to the owner, read the repo, measure, decide, write
-prompt files, write reports. **Never edit production code** — not with `edit`,
-not with `write`, not with `sed`, not with a heredoc, not because it is "a tiny
-fix". If a change belongs in the product, it goes through a prompt file. You own
-the memory directory, the rules file, and this skill's files.
+prompt files, own the verified record. **Never edit production code** — not with
+`edit`, not with `write`, not with `sed`, not with a heredoc, not because it is "a
+tiny fix". If a change belongs in the product, it goes through a prompt file. You
+own the prompt files, the rules file, and this skill's files.
 
-**Executor (a CLI coding agent).** Writes every line of code, including
-throwaway scripts. It has its own context budget and no memory of your
-conversation: the prompt file is the entire handoff.
+**Executor (a CLI coding agent).** Writes every line of code, including throwaway
+scripts — and writes back the files in the memory directory that describe its own
+run: the task report, its dated line in `STATUS.md`, the notes for a fix round.
+It holds the evidence at the only moment it exists (the commands it just ran and
+their output), and it has its own context budget and no memory of your
+conversation, so the prompt file is the entire handoff. Your half is the half it
+cannot do: confirm or contradict what it wrote, with your own measurements.
 
 The default executor is `opencode`, run non-interactively:
 
@@ -129,9 +135,12 @@ the binding constraints inside the prompt file regardless. Recipe:
    Guessing the command is the same class of error as guessing the bug.
 2. **Write the prompt file** — `<memory-dir>/prompts/<name>.md`, short sortable
    names (`FIX1.md`, `M2.md`, `menu-mobile-fix.md`). Shape: measured problem →
-   file whitelist → per-file steps → prohibitions → done-gate. Template and
-   rationale: `references/prompt-file.md`. One task per file; a batched prompt is
-   a failing prompt.
+   file whitelist → per-file steps → prohibitions → done-gate → **write-back** —
+   the assigned record-keeping: this run's report in
+   `<memory-dir>/reports/<name>.md`, its dated line in `STATUS.md`, raw command
+   and raw output behind every claim. Template and rationale:
+   `references/prompt-file.md`. One task per file; a batched prompt is a failing
+   prompt.
 3. **Run it**, keeping the shell command short:
    ```bash
    opencode run --auto "$(cat <memory-dir>/prompts/<name>.md)" 2>&1 | tee /tmp/<name>.log
@@ -143,11 +152,21 @@ the binding constraints inside the prompt file regardless. Recipe:
 4. **Verify yourself** — the report is a claim, not evidence. Accept only what
    you measured: rendered state, datastore rows, HTTP codes, exit codes. Recipes
    and traps: `references/verification.md`.
-5. **Record, then report** — update `<memory-dir>/STATUS.md` and write
-   `<memory-dir>/reports/<name>.md` **before** telling the owner it is
-   done. Layout: `references/memory-files.md`.
+5. **Audit the record it wrote, then report** — the executor has already written
+   `<memory-dir>/reports/<name>.md` and its own dated line in
+   `<memory-dir>/STATUS.md`, because step 2 assigned that to it. Read both:
+   append your `verified` section with what you measured, contradict anything the
+   numbers do not support, and promote a fact out of the unverified log only once
+   you have confirmed it. Then — and not before — tell the owner. Layout:
+   `references/memory-files.md`.
 
 ## Never trust the report
+
+The executor writes the report; you write what is true about it. That is the
+whole split, and the file makes it visible: its section carries the claims, the
+marker-delimited `verified` section below carries your measurements, and you
+append — you never edit its words. A disagreement left on the page is the audit
+trail; a disagreement you silently overwrite is a lie by omission.
 
 An executor describes success in fluent prose while the feature is dead. Match
 the claim to the measurement, every time:
@@ -191,6 +210,9 @@ caught.
   durable checks belong in the project's own test convention instead.
 - Done-gate before "done": the project's typecheck, lint, and relevant test or
   smoke run — executed by you. Then `git status`: no strays, no debug leftovers.
+- Records are the executor's to write and yours to audit. Every prompt file ends
+  with the write-back block, and a run without its report file is not a finished
+  run: `test -f <memory-dir>/reports/<name>.md` belongs in the done-gate.
 - Invariants that matter (money, ids, auth, permissions) live in one module with
   an assertion, not in a convention nobody runs.
 

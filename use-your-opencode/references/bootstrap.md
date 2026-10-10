@@ -43,8 +43,12 @@ State, what is built, how to run: read <memory-dir>/STATUS.md.
   unreliable, shorten prompts and rerun; that is not a config problem.
 - Do not trust the executor's report. Measure: rendered state, datastore rows,
   HTTP codes, exit codes. Screenshots are illustration, not evidence.
-- Every finished task: update `<memory-dir>/STATUS.md` and write
-  `<memory-dir>/reports/<name>.md`.
+- Every task ends with the executor's own record: `<memory-dir>/reports/<name>.md`
+  (claims, each with its raw command and raw output, plus what it did not verify)
+  and one dated line under `## Executor log (unverified)` in
+  `<memory-dir>/STATUS.md`. The orchestrator appends its verification and promotes
+  the fact only once measured. The prompt file assigns this; a run without its
+  report did not finish.
 - Agent notes live in <memory-dir> (gitignored); the root holds project files.
 - Scratch scripts: `<prefix>` and outside the typechecked/tested tree.
 
@@ -91,8 +95,10 @@ test -f AGENTS.md && echo present || echo missing
 - Do not edit the executor's own configuration.
 - Do not trust the executor's report: verify with measurements — rendered state,
   datastore rows, HTTP codes, exit codes. Screenshots are illustration.
-- Before reporting a finished task: update `<memory-dir>/STATUS.md` and write
-  `<memory-dir>/reports/<name>.md`.
+- Before reporting a finished task: the executor writes its record —
+  `<memory-dir>/reports/<name>.md` plus a dated line under
+  `## Executor log (unverified)` in `<memory-dir>/STATUS.md` — and the
+  orchestrator appends its verification and promotes the fact only once measured.
 <!-- use-your-opencode:end -->
 ```
 
@@ -167,9 +173,10 @@ One gitignored directory, fixed names inside, chosen once:
   AGENTS.md                    rules for every agent (committed)
   <memory-dir>/
     STATUS.md                  state, numbers, traps, how to verify
+                               + `## Executor log (unverified)` at the end
     BRIEF.md                   product brief, if there is one
     prompts/<name>.md          every command sent to the executor
-    reports/<name>.md          what each run actually did, with evidence
+    reports/<name>.md          the executor's claims + the orchestrator's verification
 ```
 
 `<memory-dir>` is a placeholder: `notes/`, `.agent/`, `ai/`, `docs/agent/` are all

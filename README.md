@@ -4,7 +4,10 @@ A skill that turns a coding agent into an **orchestrator**. It stops writing
 production code itself: each task goes to a CLI coding agent through a prompt
 file, the result is proven with the orchestrator's own measurements instead of
 the executor's report, and state lives on disk so nothing is lost to context
-compaction.
+compaction. The prompt file also assigns the record-keeping: the executor writes
+its own run report and its dated line in the status file, the orchestrator appends
+what it measured — so a wrong claim is contradicted on the page instead of
+overwritten.
 
 Works with any agent that can read `AGENTS.md` — Claude Code, Codex, Cursor,
 Gemini CLI, opencode, Copilot, Cline, Windsurf, Zed, and the rest of the
@@ -84,13 +87,20 @@ npx skills remove use-your-opencode          # uninstall
 1. **Map** the repo — rules file, memory file, install/run/test commands, and
    every file the change touches. Discover, never guess.
 2. **Write a prompt file** — `<memory-dir>/prompts/<name>.md`: measured problem,
-   file whitelist, per-file steps, prohibitions, done-gate.
+   file whitelist, per-file steps, prohibitions, done-gate, and the write-back
+   block that assigns the executor its report and its status log line.
 3. **Run** `opencode run --auto "$(cat <memory-dir>/prompts/<name>.md)"` — or any
    other CLI executor the owner has.
 4. **Verify yourself** — rendered state, datastore rows, HTTP codes, exit codes.
    The report is a claim, never evidence.
-5. **Record before reporting** — `<memory-dir>/STATUS.md` and
-   `<memory-dir>/reports/<name>.md`.
+5. **Audit the record, then report** — the executor wrote
+   `<memory-dir>/reports/<name>.md` and its dated line in `<memory-dir>/STATUS.md`
+   because the prompt asked it to; you append the `verified` section and promote a
+   fact in `STATUS.md` only after measuring it.
+
+Two writers, deliberately: the executor records what it just ran while the
+evidence is in front of it, and you record whether that is true. Neither edits
+the other's words, so a disagreement stays visible in the file.
 
 | file | contents |
 |---|---|

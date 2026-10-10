@@ -109,3 +109,11 @@ A pair: command → output, before and after the change. Not "looks right", not
 "should work", not the executor's summary. Report the ones you ran; name the ones
 you did not and why. A check you cannot run is a risk to state, not a detail to
 skip.
+
+The executor's report is where those pairs already are — it wrote them while it
+was working — so audit it line by line instead of re-describing the task: for each
+claim, either the number you measured or an explicit `contradicted, because …`.
+Your section goes below its section, never in place of it. A claim the numbers
+cannot reach ("the animation looks smooth") is not verified by reading it; either
+measure something that stands in for it (frame timing, computed style, a
+screenshot you can compare) or list it as unverified.
