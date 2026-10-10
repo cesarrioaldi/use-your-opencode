@@ -17,13 +17,18 @@ These commands use this repository's path. A fork or a rename substitutes the sa
 way — swap in your own `owner/repo`.
 
 ```bash
-npx skills add cesarrioaldi/use-your-opencode -g -a '*' -y
+npx skills add cesarrioaldi/use-your-opencode
 ```
+
+Project scope by default: the skill lands in `.agents/skills/` for the current
+project, alongside a `skills-lock.json`. In a terminal the CLI may ask which
+agents and scope you want before it installs; `-y` answers everything and is what
+agents and scripts must use. Add `-g` to install at user level instead.
 
 | flag | effect |
 |---|---|
-| `-g` | user-level install, so the workflow follows you into every project. Drop it for a project-scoped install (`.agents/skills/`) |
-| `-a '*'` | install into every agent the CLI detects |
+| `-g` | user-level install, so the workflow follows you into every project |
+| `-a '*'` | install into every agent the CLI detects, without asking |
 | `-s use-your-opencode` | install this skill only, if the repo ever holds more than one |
 | `--copy` | copy the files instead of symlinking them |
 | `-y` | no prompts — for scripts and for agents |
@@ -31,7 +36,8 @@ npx skills add cesarrioaldi/use-your-opencode -g -a '*' -y
 Other forms, all checked against the `skills` CLI:
 
 ```bash
-npx skills add https://github.com/cesarrioaldi/use-your-opencode -g -a '*' -y   # full URL
+npx skills add https://github.com/cesarrioaldi/use-your-opencode                # full URL
+npx skills add cesarrioaldi/use-your-opencode -g -y                             # user level, unattended
 npx skills add cesarrioaldi/use-your-opencode -a opencode -y                    # one agent, project scope
 npx skills add cesarrioaldi/use-your-opencode -l                                # list skills, install nothing
 npx skills use cesarrioaldi/use-your-opencode@use-your-opencode                 # print SKILL.md, install nothing
@@ -132,8 +138,10 @@ If you are an agent asked to install this skill, do exactly this and nothing els
    npx skills add cesarrioaldi/use-your-opencode -g -a '*' -y      # swap in your fork's owner/repo if you forked this
    ```
 
-   If `-a '*'` is rejected by an older CLI, install per agent or copy the folder
-   to `~/.agents/skills/use-your-opencode/` (manual install above).
+   Those flags are not optional for you: a bare `npx skills add` waits at a prompt
+   when a terminal is attached. If `-a '*'` is rejected by an older CLI, install
+   per agent or copy the folder to `~/.agents/skills/use-your-opencode/` (manual
+   install above).
 
 2. Verify, then load it:
 

@@ -260,7 +260,9 @@ The `@<skill>` suffix belongs to `use`. With `add`, select the skill with `-s`
 
 `-a '*'` covers every detected agent; `-g` installs at user level so the workflow
 follows you into every project. Drop `-g` for a project-scoped install. Update
-with `npx skills update -g`.
+with `npx skills update -g`. In a terminal a bare `npx skills add` waits at a
+prompt, so `-y` (and `-a '*'` to skip the agent question) is required for
+unattended runs.
 
 An agent with no skills system — or one the CLI does not detect — still gets the
 loop: the rules-file template in §1 carries the whole discipline, so anything that
