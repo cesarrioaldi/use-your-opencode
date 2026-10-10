@@ -67,6 +67,58 @@ Fill in the *why* and the blast radius. "Don't run the seeder" is a rule; "the
 seeder truncates every table and the owner's real records live in one of them"
 is a rule that survives a tired afternoon.
 
+### Create it, or append below it
+
+An `AGENTS.md` may already exist — written by the owner, by another tool, or by a
+previous session — and its rules outrank yours. So the write is conditional:
+
+```bash
+test -f AGENTS.md && echo present || echo missing
+```
+
+**Missing** → create the file from the template above.
+
+**Present** → append exactly one block, marker-wrapped, at the end of the file:
+
+```markdown
+<!-- use-your-opencode:start -->
+## Delegated coding workflow
+
+- All production code is written through a CLI executor: write the task to
+  `<memory-dir>/prompts/<name>.md`, then run
+  `<executor command> "$(cat <memory-dir>/prompts/<name>.md)"`. The orchestrator
+  never edits product code itself.
+- Do not edit the executor's own configuration.
+- Do not trust the executor's report: verify with measurements — rendered state,
+  datastore rows, HTTP codes, exit codes. Screenshots are illustration.
+- Before reporting a finished task: update `<memory-dir>/STATUS.md` and write
+  `<memory-dir>/reports/<name>.md`.
+<!-- use-your-opencode:end -->
+```
+
+Rules for that write:
+
+- Nothing above the markers changes: no rewording, reordering, re-titling,
+  re-wrapping, no fixing of typos, no trailing-whitespace cleanup.
+- Never delete the file, truncate it, rename it, or replace it with a symlink.
+- One block, at the end. Never insert in the middle of the existing content.
+- Run again later? If the markers are present, replace only the text between them.
+  If the file already states the same rules in its own words, add nothing.
+- Where the file contradicts you, the file wins — report the conflict to the owner
+  instead of editing their rule away.
+- Match the file's existing language, heading style, and bullet style, so the block
+  reads as if it had always been there.
+
+Verify the append instead of assuming it:
+
+```bash
+git diff --numstat AGENTS.md        # deletions must be 0, additions only
+```
+
+Outside a git repo, copy the file first (`cp AGENTS.md /tmp/AGENTS.md.bak`), then
+check that the original lines survived: `head -n "$(wc -l < /tmp/AGENTS.md.bak)" AGENTS.md | diff - /tmp/AGENTS.md.bak`
+— empty output means untouched.
+
 ### Point other tools at it
 
 ```bash

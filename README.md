@@ -20,8 +20,9 @@ whatever commands the project already has.
 
 The loop it encodes:
 
-1. **Map** the repo — rules file, memory file, the commands it runs, the files
-   the change touches.
+1. **Map** the repo — rules file (`AGENTS.md`: create it when missing, otherwise
+   append your block below the existing content and change nothing above it),
+   memory file, the commands it runs, the files the change touches.
 2. **Write a prompt file** to `<memory-dir>/prompts/<name>.md`: file whitelist,
    measured problem, per-file steps, prohibitions, done-gate.
 3. **Run** `opencode run --auto "$(cat <memory-dir>/prompts/<name>.md)"` — or any

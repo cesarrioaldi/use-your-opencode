@@ -86,6 +86,28 @@ ln -s AGENTS.md .junie/guidelines.md
 @AGENTS.md                         # CLAUDE.md as an import instead of a symlink
 ```
 
+### Create it, or append below it
+
+Never treat `AGENTS.md` as yours to rewrite. Decide before writing:
+
+```bash
+test -f AGENTS.md && echo present || echo missing
+```
+
+- **Missing** → create it from the template in `references/bootstrap.md` §1.
+- **Present** → append one marker-delimited block at the very end and leave every
+  existing line byte-identical: no reformatting, no reordering, no fixing typos,
+  no "cleaning up". That file may hold rules written for reasons you cannot see,
+  and an orchestrator that edits by taste is the failure this skill exists to
+  prevent.
+- **Already has your block** (the `use-your-opencode` markers) → replace only what
+  sits between the markers; never append a second copy.
+- **Contradicts something already there** → the existing file wins. Say so to the
+  owner and let them decide; never silently overrule a rule you found.
+
+Appending is measurable: in a git repo, `git diff --numstat AGENTS.md` must report
+`0` deletions. Full recipe: `references/bootstrap.md` §1.
+
 **Prove it, per agent — do not assume it.** A correct answer to a question whose
 answer lives in `AGENTS.md` does *not* prove the file was loaded: agents have file
 tools and search the repo. Verified 2026-10-11 — `opencode run` answered a
@@ -96,8 +118,10 @@ the binding constraints inside the prompt file regardless. Recipe:
 
 ## The loop
 
-1. **Map.** Find the project's rules file, its memory file, the commands it uses
-   to install, run, test, and typecheck, and every file the change touches.
+1. **Map.** Find the project's rules file — if `AGENTS.md` is missing, create it;
+   if it exists, append below it and never rewrite it (previous section). Find its
+   memory file, the commands it uses to install, run, test, and typecheck, and
+   every file the change touches.
    Discover, never assume: the manifest (`package.json`, `pyproject.toml`,
    `go.mod`, `Makefile`, `docker-compose.yml`), the README, the CI config, and
    the script that starts the app — that is where the port and the datastore
